@@ -37,12 +37,12 @@ limitations under the License.
 
 ## Support This Project
 
-Nagada is open-source and free to use under Apache-2.0. These specification and core protocol will always remain open.
+Nagada is open-source and free to use under Apache-2.0. The specification and core protocol will always remain open and freely usable under an open-source license..
 
 
 If this project helps you and you'd like to support ongoing development, you may donate (optional):
 
-- **UPI:** `dubeytarun@upi`
+- **UPI:** `tarundubey@upi`
 - **GitHub Sponsors:** Coming soon
 
 Every contribution helps sustain the project and community! Thank you.
