@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+*.egg-info/
+dist/
+build/
+*.pyc
+__pycache__/
+.gradle/
+target/
+*.class
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-workspace
+
+# Build artifacts
+*.o
+*.so
+*.dylib
+*.dll
+
+# Environment
+.env
+.env.local
+venv/
+env/
+
+# Logs
+*.log
+logs/
+
+# Coverage
+.coverage
+htmlcov/
+coverage/
+
+# Temporary files
+*.tmp
+.tmp/

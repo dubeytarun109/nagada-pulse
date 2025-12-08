@@ -1,0 +1,33 @@
+@startuml
+
+User --> UI
+
+UI --> ClientSync : User edits data\n(creates local state change)
+ClientSync --> Projection : Apply event immediately\n(local-first UX)
+ClientSync --> Outbox : Store pending event
+
+ClientSync --> Transport : Systole:\npendingEvents + lastKnownServerEventId
+Transport --> Protocol : Deliver request
+
+Protocol --> EventStore : Append new events\n(assign serverEventId)
+Protocol --> OffsetStore : Update lastDelivered offset
+Protocol --> EventStore : Read new server events\nserverEventId > offset
+
+Protocol --> Transport : Diastole:\n(ack list + new events + nextHeartbeatMs)
+
+Transport --> ClientSync : Deliver server response
+
+ClientSync --> Outbox : Remove acknowledged events
+ClientSync --> Projection : Apply new server events\n(in strict order)
+
+Protocol --> ProjectionBuilder : Stream events\n(replay or live)
+ProjectionBuilder --> ServerProjection : Materialize read models
+
+note right of ClientSync
+If network unavailable:
+ - queue events locally
+ - retry on reconnect
+ - apply exponential backoff
+end note
+
+@enduml

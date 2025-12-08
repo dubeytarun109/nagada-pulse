@@ -1,0 +1,118 @@
+{
+  "version": "1.0",
+  "wireFormat": {
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Nagada Wire Protocol Schema (Draft v0.1.0)",
+  "type": "object",
+  "oneOf": [
+    { "$ref": "#/$defs/SyncRequest" },
+    { "$ref": "#/$defs/SyncResponse" },
+    { "$ref": "#/$defs/ErrorResponse" }
+  ],
+
+  "$defs": {
+
+    "ClientEvent": {
+      "type": "object",
+      "required": ["clientEventId", "type", "entityId", "timestamp", "payload"],
+      "properties": {
+        "clientEventId": { "type": "string", "description": "Client-generated unique event ID (UUID recommended)" },
+        "type": { "type": "string", "description": "Domain event type name" },
+        "entityId": { "type": "string", "description": "Logical entity affected" },
+        "timestamp": { "type": "string", "format": "date-time", "description": "Local creation time" },
+        "payload": {
+          "type": "object",
+          "description": "Arbitrary JSON content describing the mutation"
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Optional metadata such as CRDT type, merge hints, or UI context",
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "ServerEvent": {
+      "allOf": [
+        { "$ref": "#/$defs/ClientEvent" },
+        {
+          "type": "object",
+          "required": ["serverEventId", "deviceId"],
+          "properties": {
+            "serverEventId": { "type": "integer", "minimum": 0 },
+            "deviceId": { "type": "string", "description": "Origin device of the event" }
+          }
+        }
+      ],
+      "description": "Globally ordered committed event"
+    },
+
+    "SyncRequest": {
+      "type": "object",
+      "required": ["deviceId", "lastKnownServerEventId"],
+      "properties": {
+        "protocolVersion": { "type": "string" },
+        "deviceId": { "type": "string" },
+        "userId": { "type": "string" },
+        "lastKnownServerEventId": { "type": "integer", "minimum": 0 },
+        "pendingEvents": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ClientEvent" },
+          "description": "Events generated locally and not yet acknowledged"
+        }
+      },
+      "additionalProperties": false
+    },
+
+    "SyncResponse": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["OK"],
+          "description": "Success response flag"
+        },
+        "acknowledgedEventIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "newServerEvents": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/ServerEvent" }
+        },
+        "nextHeartbeatMs": { "type": "integer", "minimum": 0 },
+        "serverTime": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": false
+    },
+
+    "ErrorResponse": {
+      "type": "object",
+      "required": ["status", "errorCode"],
+      "properties": {
+        "status": { "type": "string", "enum": ["ERROR"] },
+        "errorCode": {
+          "type": "string",
+          "enum": [
+            "INVALID_REQUEST",
+            "UNAUTHORIZED",
+            "SERVER_BUSY",
+            "INCOMPATIBLE_VERSION",
+            "INTERNAL_ERROR"
+          ]
+        },
+        "message": { "type": "string" },
+        "requiredVersion": { "type": "string" },
+        "supportedVersions": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
+
+}
