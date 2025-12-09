@@ -1,0 +1,196 @@
+🧪 Test Plan Overview
+Category	Purpose
+Unit Tests	Validate isolated logic and storage behavior
+Integration Tests	Validate sync orchestration with mock server
+Reliability / Crash Tests	Ensure resilience and replay durability
+Concurrency / Ordering Tests	Ensure determinism and idempotency
+Offline-first Behavior Tests	Validate sync during network loss and retries
+Compatibility Tests	Validate behavior on Flutter platforms (later)
+
+
+1️⃣ Unit Tests
+
+1. OffsetStore
+Test	Expected Behavior
+Saves and retrieves offset	Stored value returned correctly
+Offset survives restart	Persistence verified
+Overwrite behavior	Latest offset always returned
+
+
+2. PendingOutbox
+Test	Expected Behavior
+Add event	Stored successfully
+Load pending events returns FIFO	Ordered by enqueue time
+Mark as synced removes processed event	No duplicates remain
+Idempotent behavior	Calling mark twice doesn't break
+
+3. SyncTransport (Mock)
+Test	Expected Behavior
+Sends correct payload format	Matches protocol spec
+Handles empty response	Safe no-op
+Parses server events correctly	Full JSON fidelity preserved
+
+4. ConflictResolver
+Test	Expected Behavior
+Last-write-wins logic	Correct result
+Custom resolver hook invoked	Extension point validated
+Deterministic repeat result	Applying twice yields same state
+
+2️⃣ Integration Tests (Mock Server, In-memory Storage)
+
+These verify the sync engine orchestration.
+
+5. Basic Pull Cycle
+
+Steps:
+
+Client offset = 0
+
+Server returns 3 events
+
+Client applies them and updates offset
+
+✔ Expected: Projection contains 3 items, offset updated.
+
+6. Push + Pull Cycle
+
+Scenario:
+
+Client inserts new event offline
+
+Sync runs:
+
+Push client event
+
+Pull server state (including own enriched event if server rewrites)
+
+✔ Expected:
+
+Outbox becomes empty
+
+Offset progresses
+
+Changes reflected in projection store
+
+7. Idempotency / Duplicate Pull
+
+Client runs sync twice with same events available.
+
+✔ Expected:
+
+No duplicate apply
+
+Offset unchanged after second cycle
+
+8. Outbox Replay After Crash
+
+Simulation:
+
+Client inserts event
+
+Sync starts → crash before marking outbox entry synced
+
+Restart app
+
+Run sync again
+
+✔ Expected:
+
+Event pushed once
+
+No duplicates created
+
+Offset consistent
+
+3️⃣ Reliability + Stress Tests
+9. Network Failure Between Push & Pull
+
+Simulate:
+
+Push succeeds
+
+Network fails before pull
+
+✔ Expected:
+
+Client retries safely without duplicating push
+
+Eventually reaches consistent state
+
+🔟 Partial Failure in Mid-Sync
+
+Simulate server returning:
+
+error after sending half batch
+
+
+✔ Expected:
+
+Client should not update offset until full batch applied
+
+Retries fetch same batch again safely (idempotent)
+
+11. Large Batch Sync (Performance)
+
+10k server events
+
+Time budget: <2–4 seconds processing (depending platform)
+
+✔ Expected:
+
+No memory leak
+
+Sync is chunked or streamed
+
+Ordering preserved
+
+4️⃣ Multi-device / Ordering Behavior
+12. Server Replay Order Test
+
+Server returns events:
+
+[e3, e1, e2]
+
+Client must reorder them using event ID ordering guarantees.
+
+✔ Expected: local state applied in deterministic sequence.
+
+13. Conflicting Edits From Two Devices
+
+Device A updates a record
+Device B updates the same record
+Server sync sends events back
+
+✔ Expected:
+
+ConflictResolver invoked
+
+Outcome consistent across repeats
+
+5️⃣ Offline-First Functional Tests
+14. Use App Completely Offline
+
+Steps:
+
+Insert/update records offline
+
+Restart app multiple times
+
+Ensure projection reflects expected changes
+
+Sync when online restores server consistency
+
+✔ Expected: No lost mutations.
+
+15. Offline Mutation Ordering Preserved
+
+If client creates:
+
+event1 → event2 → event3
+
+
+ordering must be preserved across sync and server reflection.
+
+🏁 Definition of "PASS"
+
+The client can safely produce events offline, sync them to the server, replay server state, survive failures, and maintain deterministic correctness — with no duplicates, no loss, and no divergence.

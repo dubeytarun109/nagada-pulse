@@ -8,7 +8,6 @@
         <groupId>com.nagada.pulse</groupId>
         <artifactId>nagada-reference</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>nagada-reference-server</artifactId>

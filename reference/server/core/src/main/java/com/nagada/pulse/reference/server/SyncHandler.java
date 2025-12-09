@@ -32,7 +32,7 @@ public class SyncHandler {
         // Combine appended events and new events, ensuring uniqueness and preserving order
         java.util.Set<ServerEvent> uniqueEvents = new java.util.LinkedHashSet<>(appendedEvents);
         uniqueEvents.addAll(newEvents);
-        List<ServerEvent> allNewEvents = new java.util.ArrayList<>(uniqueEvents);
+        List<ServerEvent> newServerEvents = new java.util.ArrayList<>(uniqueEvents);
 
         // Build response
         List<String> ackedClientEventIds = request.pendingEvents != null
@@ -41,6 +41,6 @@ public class SyncHandler {
                 .collect(java.util.stream.Collectors.toList())
             : java.util.List.of();
 
-        return new SyncResponse(ackedClientEventIds, allNewEvents);
+        return new SyncResponse(ackedClientEventIds, newServerEvents);
     }
 }

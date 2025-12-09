@@ -8,7 +8,7 @@ __pycache__/
 .gradle/
 target/
 *.class
-
+.dart_tool/
 # IDEs
 .vscode/
 .idea/

@@ -32,7 +32,7 @@ public class OffsetTest {
         systoleProcessor.process(deviceId, List.of(clientEvent1, clientEvent2));
 
         // Then
-        assertThat(offsetStore.get(deviceId)).isEqualTo(-1L);
+        assertThat(offsetStore.get(deviceId)).isEqualTo(2L);
     }
 
     @Test

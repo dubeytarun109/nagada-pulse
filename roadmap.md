@@ -26,7 +26,7 @@ This document outlines the planned features and milestones for Nagada-Pulse.
 
 ### Phase 1: Foundation Implementations (0.2–0.4)
 - [x] Minimal server implementation (HTTP baseline)
-- [ ] Dart client SDK (experimental)
+- [x] Dart client SDK (experimental)
 - [ ] Conformance test kit
 - [ ] JavaScript client SDK
 - [ ] Projection helper libraries

@@ -1,7 +1,0 @@
-name: nagada_client
-description: "Nagada reference Dart client (example)"
-version: 0.0.1
-environment:
-  sdk: '>=2.17.0 <4.0.0'
-
-# No external dependencies for this reference package
