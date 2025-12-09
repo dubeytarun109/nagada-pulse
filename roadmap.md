@@ -7,7 +7,7 @@ This document outlines the planned features and milestones for Nagada-Pulse.
 **0.1** — Initial specification + reference HTTP sync  
 **0.2** — Minimal server + Dart client (experimental)  
 **0.3** — Conformance test kit  
-**0.4** — JavaScript client + projection helpers  
+**0.4** — Reference Client (Dart)
 **0.5** — Spring Boot starter + conformance suite & examples  
 **0.6** — Flutter example app  
 **0.7** — WebSocket optional transport (see `extensions/websocket-transport.md`)  
@@ -22,7 +22,7 @@ This document outlines the planned features and milestones for Nagada-Pulse.
 - [x] Client and server behavior specifications
 - [x] Conflict resolution framework
 - [x] Versioning and compatibility guidelines
-- [ ] Reference HTTP sync implementation
+- [x] Reference HTTP sync implementation
 
 ### Phase 1: Foundation Implementations (0.2–0.4)
 - [ ] Minimal server implementation (HTTP baseline)

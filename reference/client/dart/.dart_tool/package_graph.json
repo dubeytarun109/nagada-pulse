@@ -1,0 +1,14 @@
+{
+  "roots": [
+    "nagada_client"
+  ],
+  "packages": [
+    {
+      "name": "nagada_client",
+      "version": "0.0.1",
+      "dependencies": [],
+      "devDependencies": []
+    }
+  ],
+  "configVersion": 1
+}
