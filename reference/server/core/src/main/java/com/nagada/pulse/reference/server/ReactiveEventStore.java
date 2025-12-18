@@ -10,8 +10,9 @@ import reactor.core.publisher.Mono;
  */
 public interface ReactiveEventStore {
     Mono<ServerEvent> append(String deviceId, ClientEvent clientEvent);
-
     Flux<ServerEvent> listAfter(long afterId);
-
     Mono<Boolean> exists(String deviceId, String clientEventId);
+    Mono<Long> getEarliestServerEventId();
+    Mono<Long> getLatestServerEventId();
+
 }

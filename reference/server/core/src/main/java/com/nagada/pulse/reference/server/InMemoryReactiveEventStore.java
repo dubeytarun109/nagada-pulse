@@ -50,4 +50,14 @@ public class InMemoryReactiveEventStore implements ReactiveEventStore {
             return deviceSeen != null && deviceSeen.containsKey(clientEventId);
         });
     }
+
+    @Override
+    public Mono<Long> getEarliestServerEventId() {
+        return Mono.just(events.isEmpty() ? 0L : events.get(0).getServerEventId());
+    }
+
+    @Override
+    public Mono<Long> getLatestServerEventId() {
+        return Mono.just(events.isEmpty() ? 0L : events.get(events.size() - 1).getServerEventId());
+    }
 }

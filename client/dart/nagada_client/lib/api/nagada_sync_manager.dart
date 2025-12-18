@@ -179,12 +179,13 @@ class NagadaSyncManager implements SyncManager {
 
         for (final event in response.newServerEvents) {
           // Idempotency check
-          if (event.serverEventId > lastKnownId) {
+          if (event.serverEventId == -1 || event.serverEventId > lastKnownId) {
             // Apply to projection
             await projectionStore.applyServerEvent(event);
             // Update cursor immediately after apply to ensure consistency
-            await offsetStore.save(event.serverEventId);
-            
+            if(event.serverEventId != -1){
+             await offsetStore.save(event.serverEventId);
+            }
             onProjectionUpdated?.call(event); // This line is correct, the previous comment was misleading.
           }
         }

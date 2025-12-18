@@ -59,6 +59,7 @@ class NagadaClientImpl implements NagadaClient {
   final _log = Logger('NagadaClientImpl');
   late final SyncEngine _engine;
   final PendingOutbox _outbox;
+  final HttpSyncTransport _transport;
   final Uuid _uuid;
   final _eventsController = StreamController<List<ServerEvent>>.broadcast();
 
@@ -70,6 +71,7 @@ class NagadaClientImpl implements NagadaClient {
     ConflictResolver? conflictResolver,
     Uuid? uuid,
   })  : _outbox = outbox,
+        _transport = transport,
         _uuid = uuid ?? const Uuid() {
     _log.fine('Initializing NagadaClient implementation');
     _engine = SyncEngine(
